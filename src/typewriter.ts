@@ -48,14 +48,12 @@ export class Typewriter {
                     } else {
                         toRemove = cmd.remove;
                     }
-                    console.log("Removing", toRemove)
                     for (var i = 0; i < toRemove; i++) {
                         const newContent = content.substring(0, content.length - i - 1);
                         element.innerHTML = newContent;
                         await sleep(Math.max(0, typeSpeed));
                     }
                 } else if (cmd.text) {
-                    console.log("Adding text", cmd.text);
                     for (var i = 0; i < cmd.text.length; i++) {
                         element.innerHTML = content + cmd.text.substring(0, i + 1);
                         await sleep(Math.max(0, typeSpeed));
