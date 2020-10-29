@@ -1,0 +1,14 @@
+.typewriter  {
+  display: inline-block;
+  border-right: .17em solid black;
+  animation: blinking-cursor .8s step-end infinite;
+}
+@keyframes blinking-cursor {
+  from,
+  to {
+    border-color: transparent
+  }
+  50% {
+    border-color: black;
+  }
+}
