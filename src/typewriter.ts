@@ -3,10 +3,12 @@
 export type TypewriterCommand = {
     text?: string;
     stop?: boolean;
+    append?: boolean;
     remove?: any;  //number of chars to remove or true for all
-    delay?: number; //delay before starting
-    speed?: number; //typing speed
+    delay?: number; //delay before starting (milliseconds)
+    speed?: number; //typing speed (milliseconds)
     removeSpeed?: number;
+    pause?: number; //ms to sleep before starting
     variance?: number; //max variance to add/remove from speed
 }
 export type TypewriterOpts = {
@@ -15,7 +17,7 @@ export type TypewriterOpts = {
     variance?: number; //max variance to add/remove from speed
 }
 
-const sleep = async (timeout: number):Promise<any> => {
+const sleep = async (timeout: number): Promise<any> => {
     return new Promise((resolve, _) => {
         setTimeout(() => {
             resolve();
@@ -35,7 +37,7 @@ export class Typewriter {
     }
 
     async init(element: HTMLElement) {
-        const {commands, variance, speed} = this.options;
+        const { commands, variance, speed } = this.options;
         const textElement = document.createElement("span");
         textElement.className = "typewriter-content";
         element.appendChild(textElement);
@@ -49,10 +51,20 @@ export class Typewriter {
                 const cVar = cmd.variance || variance || 0;
                 const cSpeed = cmd.speed || speed || 250;
                 const rSpeed = cmd.removeSpeed || 100;
-                const typeSpeed = cSpeed + ((Math.random() - 0.5) * cVar);
-                const deleteSpeed = rSpeed + ((Math.random() - 0.5) * cVar);
+
+                const remove = async (toRemove: number) => {
+                    const deleteSpeed = rSpeed + ((Math.random() - 0.5) * cVar);
+                    for (var i = 0; i < toRemove; i++) {
+                        const newContent = content.substring(0, content.length - i - 1);
+                        textElement.innerHTML = newContent;
+                        await sleep(Math.max(0, deleteSpeed));
+                    }
+                }
                 if (cmd.stop) {
                     return;
+                }
+                if (cmd.pause) {
+                    await sleep(cmd.pause)
                 }
                 if (cmd.remove) {
                     let toRemove = 0;
@@ -61,20 +73,30 @@ export class Typewriter {
                     } else {
                         toRemove = cmd.remove;
                     }
-                    for (var i = 0; i < toRemove; i++) {
-                        const newContent = content.substring(0, content.length - i - 1);
-                        textElement.innerHTML = newContent;
-                        await sleep(Math.max(0, deleteSpeed));
+                    await remove(toRemove);
+                }
+                if (cmd.text) {
+                    const typeSpeed = cSpeed + ((Math.random() - 0.5) * cVar);
+                    let endOfCommon = 0;
+                    if (!cmd.append) {
+                        for (let idx = 0; idx < content.length; idx++) {
+                            if (content.charAt(idx) == cmd.text.charAt(idx)) {
+                                endOfCommon = endOfCommon + 1;
+                            } else {
+                                break;
+                            }
+                        }
+                        await remove(content.length - endOfCommon);
                     }
-                } else if (cmd.text) {
-                    for (var i = 0; i < cmd.text.length; i++) {
-                        textElement.innerHTML = content + cmd.text.substring(0, i + 1);
+                    const updatedContent = textElement.innerHTML;
+                    for (var i = endOfCommon; i < cmd.text.length; i++) {
+                        textElement.innerHTML = updatedContent + cmd.text.substring(endOfCommon, i + 1);
                         await sleep(Math.max(0, typeSpeed));
                     }
                 }
             }
         }
-        
+
 
     }
 

@@ -25,11 +25,10 @@
                 variance: 75,
                 commands: [
                     { text: "Dette er en prøve" },
-                    { remove: 5 },
-                    { text: "test. " },
-                    { text: "Dette er en længere prøve..asd fasdfjadslkfjladsjflk adsjfkljadfjdalskjfl adsjfklajdslfjadslfaldsjflkasdjflajsdflkjasd" },
-                    { stop: true },
-                    { remove: true }
+                    { text: "Dette er en længere prøve..asd fasdfjadslkfjladsjflk adsj. " },
+                    { text: "Dette bliver skrevet efter...", append: true, pause: 2000 },
+                    { remove: 2 },
+                    { text: " Intet tilfælles"}
                 ]
             };
             var tw = new Typewriter(settings);
