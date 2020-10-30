@@ -4,16 +4,20 @@
     <div>
         Something, something, something
     </div>
-    <div id="typewriter" class="typewriter">
+    <div id="typewriter" class="typewriter" style="width: 100px; word-break: break-all;">
 
     </div>
     <script src="/dist/typewriter.js"></script>
     <script>
             var settings = {
+                speed: 100,
+                variance: 75,
                 commands: [
                     { text: "Dette er en prøve" },
                     { remove: 5 },
-                    { text: "test" },
+                    { text: "test. " },
+                    { text: "Dette er en længere prøve..asd fasdfjadslkfjladsjflk adsjfkljadfjdalskjfl adsjfklajdslfjadslfaldsjflkasdjflajsdflkjasd" },
+                    { stop: true },
                     { remove: true }
                 ]
             };

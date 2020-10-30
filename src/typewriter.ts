@@ -2,6 +2,7 @@
 
 export type TypewriterCommand = {
     text?: string;
+    stop?: boolean;
     remove?: any;  //number of chars to remove or true for all
     delay?: number; //delay before starting
     speed?: number; //typing speed
@@ -34,13 +35,22 @@ export class Typewriter {
 
     async init(element: HTMLElement) {
         const {commands, variance, speed} = this.options;
+        const textElement = document.createElement("span");
+        textElement.className = "typewriter-content";
+        element.appendChild(textElement);
+        const cursor = document.createElement("span");
+        cursor.className = "typewriter-cursor";
+        element.appendChild(cursor);
         while (this.running) {
             for (const idx in commands) {
                 const cmd = commands[idx];
-                const content = element.innerHTML;
+                const content = textElement.innerHTML;
                 const cVar = cmd.variance || variance || 0;
                 const cSpeed = cmd.speed || speed || 250;
                 const typeSpeed = cSpeed + ((Math.random() - 0.5) * cVar);
+                if (cmd.stop) {
+                    return;
+                }
                 if (cmd.remove) {
                     let toRemove = 0;
                     if (cmd.remove == true) {
@@ -50,12 +60,12 @@ export class Typewriter {
                     }
                     for (var i = 0; i < toRemove; i++) {
                         const newContent = content.substring(0, content.length - i - 1);
-                        element.innerHTML = newContent;
+                        textElement.innerHTML = newContent;
                         await sleep(Math.max(0, typeSpeed));
                     }
                 } else if (cmd.text) {
                     for (var i = 0; i < cmd.text.length; i++) {
-                        element.innerHTML = content + cmd.text.substring(0, i + 1);
+                        textElement.innerHTML = content + cmd.text.substring(0, i + 1);
                         await sleep(Math.max(0, typeSpeed));
                     }
                 }
