@@ -6,6 +6,7 @@ export type TypewriterCommand = {
     remove?: any;  //number of chars to remove or true for all
     delay?: number; //delay before starting
     speed?: number; //typing speed
+    removeSpeed?: number;
     variance?: number; //max variance to add/remove from speed
 }
 export type TypewriterOpts = {
@@ -47,7 +48,9 @@ export class Typewriter {
                 const content = textElement.innerHTML;
                 const cVar = cmd.variance || variance || 0;
                 const cSpeed = cmd.speed || speed || 250;
+                const rSpeed = cmd.removeSpeed || 100;
                 const typeSpeed = cSpeed + ((Math.random() - 0.5) * cVar);
+                const deleteSpeed = rSpeed + ((Math.random() - 0.5) * cVar);
                 if (cmd.stop) {
                     return;
                 }
@@ -61,7 +64,7 @@ export class Typewriter {
                     for (var i = 0; i < toRemove; i++) {
                         const newContent = content.substring(0, content.length - i - 1);
                         textElement.innerHTML = newContent;
-                        await sleep(Math.max(0, typeSpeed));
+                        await sleep(Math.max(0, deleteSpeed));
                     }
                 } else if (cmd.text) {
                     for (var i = 0; i < cmd.text.length; i++) {
